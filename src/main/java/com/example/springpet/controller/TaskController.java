@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("api/v1/tasks")
 @RequiredArgsConstructor
 public class TaskController {
     private final TaskService taskService;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
         return ResponseEntity.ok(taskService.findAllTasks());
     }
@@ -37,12 +37,12 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/filter")
+    @GetMapping("/filtered-tasks")
     public ResponseEntity<List<Task>> getFilteredTasks(@RequestParam Status status) {
         return ResponseEntity.ok(taskService.filterAllTasks(status));
     }
 
-    @GetMapping("/sort")
+    @GetMapping("/sorted-tasks")
     public ResponseEntity<List<Task>> getSortedTask() {
         return ResponseEntity.ok(taskService.sortAllTasks());
     }
