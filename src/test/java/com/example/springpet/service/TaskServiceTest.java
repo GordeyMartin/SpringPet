@@ -3,6 +3,7 @@ package com.example.springpet.service;
 import com.example.springpet.model.Status;
 import com.example.springpet.model.Task;
 import com.example.springpet.model.TaskDTO;
+import com.example.springpet.model.exceptions.InvalidArgumentException;
 import com.example.springpet.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -186,6 +187,13 @@ public class TaskServiceTest {
         Status result = taskService.findTaskById(3L).getStatus();
 
         assertEquals(Status.IN_PROGRESS, result);
+    }
+
+    @Test
+    void editTaskTest_shouldThrowException() {
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("fieldThatDoesNotExist", Status.IN_PROGRESS);
+        assertThrows(InvalidArgumentException.class, () -> taskService.editTask(3L, myMap));
     }
 
     @Test

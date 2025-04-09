@@ -4,6 +4,7 @@ import com.example.springpet.model.Field;
 import com.example.springpet.model.Status;
 import com.example.springpet.model.Task;
 import com.example.springpet.model.TaskDTO;
+import com.example.springpet.model.exceptions.InvalidArgumentException;
 import com.example.springpet.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,12 +57,16 @@ public class TaskService {
     @Transactional
     public TaskDTO editTask(Long id, Map<String, Object> updates) {
         for (Map.Entry<String, Object> entry : updates.entrySet()) {
-            Field field = Field.valueOf(entry.getKey().toUpperCase().replace(" ", "_"));
-            switch (field) {
-                case NAME -> taskRepository.updateName(id, entry.getValue().toString());
-                case DESCRIPTION -> taskRepository.updateDescription(id, entry.getValue().toString());
-                case DEADLINE -> taskRepository.updateDeadline(id, LocalDate.parse(entry.getValue().toString()));
-                case STATUS -> taskRepository.updateStatus(id, Status.valueOf(entry.getValue().toString().toUpperCase().replace(" ", "_")));
+            try {
+                Field field = Field.valueOf(entry.getKey().toUpperCase().replace(" ", "_"));
+                switch (field) {
+                    case NAME -> taskRepository.updateName(id, entry.getValue().toString());
+                    case DESCRIPTION -> taskRepository.updateDescription(id, entry.getValue().toString());
+                    case DEADLINE -> taskRepository.updateDeadline(id, LocalDate.parse(entry.getValue().toString()));
+                    case STATUS -> taskRepository.updateStatus(id, Status.valueOf(entry.getValue().toString().toUpperCase().replace(" ", "_")));
+                }
+            } catch(IllegalArgumentException e) {
+                throw new InvalidArgumentException(e.getMessage());
             }
         }
         Task task = taskRepository.findById(id).orElseThrow();

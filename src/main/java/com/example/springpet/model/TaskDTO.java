@@ -13,6 +13,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class TaskDTO {
+
+    private Long id;
+
     @NotNull(message = "Name should not be empty")
     String name;
 
@@ -25,6 +28,7 @@ public class TaskDTO {
     Status status;
 
     public TaskDTO(Task task) {
+        this.id = task.getId();
         this.name = task.getName();
         this.description = task.getDescription();
         this.deadline = task.getDeadline();
