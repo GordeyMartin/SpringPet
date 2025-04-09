@@ -1,9 +1,6 @@
 package com.example.springpet.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +13,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class TaskDTO {
-    @NonNull
+    @NotNull(message = "Name should not be empty")
     String name;
 
     String description;
 
-    @NonNull
+    @NotNull(message = "Deadline should not be empty")
     LocalDate deadline;
 
-    @NonNull
+    @NotNull(message = "Status should not be empty")
     Status status;
 
     public TaskDTO(Task task) {

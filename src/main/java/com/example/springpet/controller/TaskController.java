@@ -1,16 +1,19 @@
 package com.example.springpet.controller;
 
 import com.example.springpet.model.Status;
-import com.example.springpet.model.Task;
 import com.example.springpet.model.TaskDTO;
+import com.example.springpet.model.exceptions.InvalidArgumentException;
 import com.example.springpet.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/tasks")
@@ -24,7 +27,13 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDto) {
+    public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskDTO taskDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.joining("; "));
+            throw new InvalidArgumentException(errorMessage);
+        }
         return ResponseEntity.ok(taskService.saveTask(taskDto));
     }
 
