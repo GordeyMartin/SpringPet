@@ -2,6 +2,7 @@ package com.example.springpet.service;
 
 import com.example.springpet.model.Status;
 import com.example.springpet.model.Task;
+import com.example.springpet.model.TaskDTO;
 import com.example.springpet.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +27,11 @@ public class TaskServiceTest {
     Task task2;
     Task task3;
     Task task4;
+
+    TaskDTO task1DTO;
+    TaskDTO task2DTO;
+    TaskDTO task3DTO;
+    TaskDTO task4DTO;
     @Mock
     private TaskRepository taskRepository;
 
@@ -38,27 +45,33 @@ public class TaskServiceTest {
         task3 = new Task(3L, "c", "desc3", LocalDate.parse("2021-02-09"), Status.TODO);
         task4 = new Task(4L, "d", "desc4", LocalDate.parse("2002-03-12"), Status.IN_PROGRESS);
         listOfTasks = new ArrayList<>(Arrays.asList(task1, task2, task3));
+
+        task1DTO = new TaskDTO(task1);
+        task2DTO = new TaskDTO(task2);
+        task3DTO = new TaskDTO(task3);
+        task4DTO = new TaskDTO(task4);
     }
 
     @Test
     void findAllTasksTest() {
         when(taskRepository.findAll()).thenReturn(listOfTasks);
-        List<Task> result = taskService.findAllTasks();
+        List<TaskDTO> expected = new ArrayList<>(Arrays.asList(task1DTO, task2DTO, task3DTO));
 
-        assertEquals(listOfTasks, result);
+        List<TaskDTO> result = taskService.findAllTasks();
+        assertEquals(expected, result);
     }
 
     @Test
     void saveTaskTest() {
-        when(taskRepository.save(task4)).thenAnswer(invocation -> {
+        when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> {
             listOfTasks.add(task4);
             return task4;
         });
         List<Task> expected = new ArrayList<>(Arrays.asList(task1, task2, task3, task4));
 
-        Task result = taskService.saveTask(task4);
+        TaskDTO result = taskService.saveTask(task4DTO);
 
-        assertEquals(task4, result);
+        assertEquals(task4DTO, result);
         assertEquals(listOfTasks, expected);
     }
 
@@ -78,9 +91,9 @@ public class TaskServiceTest {
     @Test
     void filterAllTasksTest() {
         when(taskRepository.findAll()).thenReturn(listOfTasks);
-        List<Task> expected = Arrays.asList(task1, task2);
+        List<TaskDTO> expected = Arrays.asList(task1DTO, task2DTO);
 
-        List<Task> result = taskService.filterAllTasks(Status.DONE);
+        List<TaskDTO> result = taskService.filterAllTasks(Status.DONE);
 
         assertEquals(expected, result);
     }
@@ -88,9 +101,9 @@ public class TaskServiceTest {
     @Test
     void sortAllTasksTest() {
         when(taskRepository.findAll()).thenReturn(listOfTasks);
-        List<Task> expected = Arrays.asList(task3, task1, task2);
+        List<TaskDTO> expected = Arrays.asList(task3DTO, task1DTO, task2DTO);
 
-        List<Task> result = taskService.sortAllTasks();
+        List<TaskDTO> result = taskService.sortAllTasks();
 
         assertEquals(expected, result);
     }
@@ -99,9 +112,9 @@ public class TaskServiceTest {
     void findTaskByIdTest_whenExists() {
         when(taskRepository.findById(3L)).thenReturn(Optional.ofNullable(task3));
 
-        Task result = taskService.findTaskById(3L);
+        TaskDTO result = taskService.findTaskById(3L);
 
-        assertEquals(task3, result);
+        assertEquals(task3DTO, result);
     }
 
     @Test

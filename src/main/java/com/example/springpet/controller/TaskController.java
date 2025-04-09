@@ -2,9 +2,11 @@ package com.example.springpet.controller;
 
 import com.example.springpet.model.Status;
 import com.example.springpet.model.Task;
+import com.example.springpet.model.TaskDTO;
 import com.example.springpet.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,17 +19,17 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
+    public ResponseEntity<List<TaskDTO>> getAllTasks() {
         return ResponseEntity.ok(taskService.findAllTasks());
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        return ResponseEntity.ok(taskService.saveTask(task));
+    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDto) {
+        return ResponseEntity.ok(taskService.saveTask(taskDto));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Task> editTask(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<TaskDTO> editTask(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         return ResponseEntity.ok(taskService.editTask(id, updates));
     }
 
@@ -38,12 +40,12 @@ public class TaskController {
     }
 
     @GetMapping("/filtered-tasks")
-    public ResponseEntity<List<Task>> getFilteredTasks(@RequestParam Status status) {
+    public ResponseEntity<List<TaskDTO>> getFilteredTasks(@RequestParam Status status) {
         return ResponseEntity.ok(taskService.filterAllTasks(status));
     }
 
     @GetMapping("/sorted-tasks")
-    public ResponseEntity<List<Task>> getSortedTask() {
+    public ResponseEntity<List<TaskDTO>> getSortedTask() {
         return ResponseEntity.ok(taskService.sortAllTasks());
     }
 }

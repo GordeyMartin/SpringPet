@@ -26,4 +26,11 @@ public class Task {
 
     @Column(nullable = false)
     Status status;
+
+    public Task(TaskDTO taskDto) {
+        this.name = taskDto.getName();
+        this.description = taskDto.getDescription();
+        this.deadline = taskDto.getDeadline();
+        this.status = taskDto.getStatus();
+    }
 }
